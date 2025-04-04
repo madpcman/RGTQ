@@ -30,7 +30,8 @@ jobs:
 
       - name: Run tests with SQLite
         env:
-          DATABASE_URL: sqlite:///:memory:
+          DATABASE_URL: sqlite:///:memory
         run: |
           cd backend
+          source .venv/bin/activate
           pytest --cov=app --cov-report=xml
