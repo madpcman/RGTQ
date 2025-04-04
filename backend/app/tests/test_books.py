@@ -1,8 +1,6 @@
-
-
 import pytest
-from db import client
 from fastapi.testclient import TestClient
+from app.tests.conftest import client
 
 def test_create_book(client):
     response = client.post("/books/", json={
@@ -20,7 +18,7 @@ def test_create_book(client):
     assert data["item"]["author"] == "Tester"
     assert data["item"]["detail"]["publisher"] == "TestPub"
     global book_id
-    book_id = data["item"]["id"]  # 후속 테스트에서 사용할 책 ID 저장
+    book_id = data["item"]["id"]
 
 
 def test_get_books(client):
@@ -60,6 +58,19 @@ def test_update_book(client):
     data = response.json()["detail"]
     assert data["item"]["title"] == "Updated Title"
     assert data["item"]["detail"]["year"] == 2025
+
+def test_err_update_book(client):
+    response = client.put(f"/books/0", json={
+        "title": "Updated Title",
+        "author": "Updated Author",
+        "detail": {
+            "description": "Updated Description",
+            "publisher": "UpdatedPub",
+            "year": 2025
+        }
+    })
+    assert response.status_code == 404
+    assert response.json()["error"] == "ERR_404"
 
 
 def test_delete_book(client):
