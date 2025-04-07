@@ -1,5 +1,6 @@
 import json
 from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import or_
 from fastapi import HTTPException
 from app.models.books import Book, BookDetail
 from app.schemas.books import BookCreate, BookUpdate, BookListResponse
@@ -15,10 +16,13 @@ def get_books_with_details(
     query = db.query(Book).join(Book.detail)
 
     # 동적 필터 조건 추가
-    if title:
-        query = query.filter(Book.title.ilike(f"%{title}%"))
-    if author:
-        query = query.filter(Book.author.ilike(f"%{author}%"))
+    if title or author:
+        conditions = []
+        if title:
+            conditions.append(Book.title.ilike(f"%{title}%"))
+        if author:
+            conditions.append(Book.author.ilike(f"%{author}%"))
+        query = query.filter(or_(*conditions))
 
     total = query.count()
     results = query.offset(offset).limit(limit).all()
@@ -48,7 +52,7 @@ def create_book(db: Session, book_data: BookCreate):
             book_id=new_book.id,
             description=book_data.detail.description,
             publisher=book_data.detail.publisher,
-            year=book_data.detail.year
+            publishedDate=book_data.detail.publishedDate
         )
         db.add(new_detail)
         db.commit()
@@ -82,8 +86,8 @@ def update_book(db: Session, book_id: int, book_data: BookUpdate):
             detail.description = book_data.detail.description
         if book_data.detail.publisher is not None:
             detail.publisher = book_data.detail.publisher
-        if book_data.detail.year is not None:
-            detail.year = book_data.detail.year
+        if book_data.detail.publishedDate is not None:
+            detail.publishedDate = book_data.detail.publishedDate
 
         db.add(detail)
         db.commit()

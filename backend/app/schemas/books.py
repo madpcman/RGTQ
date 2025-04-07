@@ -1,10 +1,11 @@
 from pydantic import BaseModel
 from typing import List, Optional
+from datetime import date
 
 class BookDetailSchema(BaseModel):
     description: str
     publisher: str
-    year: int
+    publishedDate: date
 
     class Config:
         orm_mode = True

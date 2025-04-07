@@ -1,6 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from app.tests.conftest import client
+from datetime import date
 
 def test_create_book(client):
     response = client.post("/books/", json={
@@ -9,7 +10,7 @@ def test_create_book(client):
         "detail": {
             "description": "A book for testing.",
             "publisher": "TestPub",
-            "year": 2024
+            "publishedDate": date.now().isoformat()
         }
     })
     assert response.status_code == 200
@@ -51,13 +52,13 @@ def test_update_book(client):
         "detail": {
             "description": "Updated Description",
             "publisher": "UpdatedPub",
-            "year": 2025
+            "publishedDate": date.now().isoformat()
         }
     })
     assert response.status_code == 200
     data = response.json()["detail"]
     assert data["item"]["title"] == "Updated Title"
-    assert data["item"]["detail"]["year"] == 2025
+    assert data["item"]["detail"]["publisher"] == "UpdatedPub"
 
 def test_err_update_book(client):
     response = client.put(f"/books/0", json={
@@ -66,7 +67,7 @@ def test_err_update_book(client):
         "detail": {
             "description": "Updated Description",
             "publisher": "UpdatedPub",
-            "year": 2025
+            "publishedDate": date.now().isoformat()
         }
     })
     assert response.status_code == 404
