@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Book } from "@/app/models/book";
-import { fetchBooks, deleteBook } from "@/app/lib/api";
+import { fetchBooks, deleteBook } from "@/app/libs/api";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { debounce } from "lodash";

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { fetchBook, updateBook } from "@/app/lib/api";
+import { fetchBook, updateBook } from "@/app/libs/api";
 import { Book } from "@/app/models/book";
 import BookForm from "@/app/components/BookForm";
 import toast from "react-hot-toast";
