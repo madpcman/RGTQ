@@ -6,6 +6,8 @@ class BookDetailSchema(BaseModel):
     description: str
     publisher: str
     publishedDate: date
+    sellCount: int
+    stockCount: int
 
     class Config:
         orm_mode = True

@@ -52,7 +52,9 @@ def create_book(db: Session, book_data: BookCreate):
             book_id=new_book.id,
             description=book_data.detail.description,
             publisher=book_data.detail.publisher,
-            publishedDate=book_data.detail.publishedDate
+            publishedDate=book_data.detail.publishedDate,
+            sellCount=book_data.detail.sellCount,
+            stockCount=book_data.detail.stockCount
         )
         db.add(new_detail)
         db.commit()
@@ -75,12 +77,12 @@ def update_book(db: Session, book_id: int, book_data: BookUpdate):
     db.commit()
     db.refresh(book)
 
-
     if book_data.detail:
         detail = db.query(BookDetail).filter(BookDetail.book_id == book_id).first()
         if not detail:
             # 책 상세 정보가 없는 경우 새로 추가
             detail = BookDetail(book_id=book_id)
+            db.add(detail)
 
         if book_data.detail.description is not None:
             detail.description = book_data.detail.description
@@ -88,8 +90,11 @@ def update_book(db: Session, book_id: int, book_data: BookUpdate):
             detail.publisher = book_data.detail.publisher
         if book_data.detail.publishedDate is not None:
             detail.publishedDate = book_data.detail.publishedDate
+        if book_data.detail.sellCount < 0 or book_data.detail.stockCount < 0:
+            raise HTTPException(status_code=400, detail="Invaild parameter")
+        detail.sellCount = book_data.detail.sellCount
+        detail.stockCount = book_data.detail.stockCount
 
-        db.add(detail)
         db.commit()
         db.refresh(detail)
 

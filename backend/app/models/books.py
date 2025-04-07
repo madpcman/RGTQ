@@ -19,6 +19,8 @@ class BookDetail(Base):
     description = Column(String, nullable=True)
     publisher = Column(String)
     publishedDate = Column(Date)
+    sellCount = Column(Integer, default=0)
+    stockCount = Column(Integer, default=0)
 
     book = relationship("Book", back_populates="detail")
 
